@@ -58,6 +58,10 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   * {
     @apply border-border;
   }
@@ -174,6 +178,71 @@
     50% { opacity: 0.8; }
     52% { opacity: 1; }
     54% { opacity: 0.9; }
+  }
+
+  @keyframes flickerGlow1 {
+    0%   { opacity: 1; }
+    3%   { opacity: 0.7; }
+    6%   { opacity: 1; }
+    20%  { opacity: 0.9; }
+    21%  { opacity: 0.1; }
+    22%  { opacity: 1; }
+    60%  { opacity: 0.95; }
+    61%  { opacity: 0; }
+    62%  { opacity: 0.8; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes flickerGlow2 {
+    0%   { opacity: 1; }
+    5%   { opacity: 0.6; }
+    7%   { opacity: 1; }
+    25%  { opacity: 0.85; }
+    26%  { opacity: 0.15; }
+    28%  { opacity: 1; }
+    55%  { opacity: 0.9; }
+    57%  { opacity: 0.05; }
+    59%  { opacity: 0.75; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes flickerGlow3 {
+    0%   { opacity: 1; }
+    8%   { opacity: 0.65; }
+    10%  { opacity: 1; }
+    30%  { opacity: 0.9; }
+    32%  { opacity: 0.08; }
+    34%  { opacity: 0.95; }
+    65%  { opacity: 1; }
+    66%  { opacity: 0.1; }
+    68%  { opacity: 0.85; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes flickerGlow4 {
+    0%   { opacity: 1; }
+    4%   { opacity: 0.75; }
+    6%   { opacity: 1; }
+    18%  { opacity: 0.88; }
+    19%  { opacity: 0.12; }
+    21%  { opacity: 1; }
+    50%  { opacity: 0.92; }
+    52%  { opacity: 0.05; }
+    54%  { opacity: 0.82; }
+    100% { opacity: 1; }
+  }
+
+  @keyframes flickerGlow5 {
+    0%   { opacity: 1; }
+    10%  { opacity: 0.7; }
+    12%  { opacity: 1; }
+    35%  { opacity: 0.85; }
+    36%  { opacity: 0.1; }
+    38%  { opacity: 0.9; }
+    70%  { opacity: 1; }
+    72%  { opacity: 0.08; }
+    74%  { opacity: 0.8; }
+    100% { opacity: 1; }
   }
 }
 

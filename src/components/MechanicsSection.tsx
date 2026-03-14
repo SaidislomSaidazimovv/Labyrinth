@@ -140,7 +140,8 @@ const MechanicsSection = () => {
             </h3>
           </div>
           <div className="card-atmospheric rounded-lg overflow-hidden">
-            <table className="w-full">
+            <div className="overflow-x-auto w-full">
+            <table className="w-full min-w-[500px]">
               <thead>
                 <tr className="border-b border-border">
                   <th className="text-left p-4 font-mono text-xs text-primary uppercase tracking-wider">Item</th>
@@ -158,6 +159,7 @@ const MechanicsSection = () => {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
 

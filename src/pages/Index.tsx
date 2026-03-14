@@ -81,7 +81,7 @@ const Index = () => {
           
           <div className="mt-12 pt-8 border-t border-border/50">
             <p className="font-mono text-xs text-muted-foreground">
-              © 2025 — Confidential Game Design Document
+              © 2026 — Confidential Game Design Document
             </p>
           </div>
         </div>

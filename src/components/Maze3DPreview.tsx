@@ -124,17 +124,17 @@ const Maze3DPreview = ({ mazeSize = 15 }: Maze3DPreviewProps) => {
   }, []);
 
   return (
-    <div className="relative w-full h-[500px] rounded-lg overflow-hidden card-atmospheric">
+    <div className="relative w-full h-[280px] sm:h-[380px] md:h-[500px] rounded-lg overflow-hidden card-atmospheric">
       {/* Controls overlay */}
       <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={regenerate}
-          className="flex items-center gap-2 px-3 py-2 bg-primary/20 hover:bg-primary/30 border border-primary/50 rounded-lg text-primary text-sm font-mono transition-colors"
+          className="flex items-center gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-primary/20 hover:bg-primary/30 border border-primary/50 rounded-lg text-primary text-xs sm:text-sm font-mono transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
-          Regenerate
+          <span className="hidden sm:inline">Regenerate</span>
         </motion.button>
         
         <div className="flex gap-2">
@@ -142,7 +142,7 @@ const Maze3DPreview = ({ mazeSize = 15 }: Maze3DPreviewProps) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => adjustSize(-2)}
-            className="flex items-center justify-center w-10 h-10 bg-muted/50 hover:bg-muted border border-border rounded-lg text-muted-foreground transition-colors"
+            className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-muted/50 hover:bg-muted border border-border rounded-lg text-muted-foreground transition-colors"
           >
             <ZoomOut className="w-4 h-4" />
           </motion.button>
@@ -150,7 +150,7 @@ const Maze3DPreview = ({ mazeSize = 15 }: Maze3DPreviewProps) => {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => adjustSize(2)}
-            className="flex items-center justify-center w-10 h-10 bg-muted/50 hover:bg-muted border border-border rounded-lg text-muted-foreground transition-colors"
+            className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-muted/50 hover:bg-muted border border-border rounded-lg text-muted-foreground transition-colors"
           >
             <ZoomIn className="w-4 h-4" />
           </motion.button>
@@ -160,10 +160,10 @@ const Maze3DPreview = ({ mazeSize = 15 }: Maze3DPreviewProps) => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={resetCamera}
-          className="flex items-center gap-2 px-3 py-2 bg-muted/50 hover:bg-muted border border-border rounded-lg text-muted-foreground text-sm font-mono transition-colors"
+          className="flex items-center gap-2 px-2 sm:px-3 py-1.5 sm:py-2 bg-muted/50 hover:bg-muted border border-border rounded-lg text-muted-foreground text-xs sm:text-sm font-mono transition-colors"
         >
           <RotateCcw className="w-4 h-4" />
-          Reset View
+          <span className="hidden sm:inline">Reset View</span>
         </motion.button>
       </div>
 
