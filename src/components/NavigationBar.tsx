@@ -1,139 +1,113 @@
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { sections } from "@/lib/sections";
+import { useScrolledPastHero } from "@/hooks/useActiveSection";
 
-const sections = [
-  { id: "overview", label: "Overview" },
-  { id: "story", label: "Story" },
-  { id: "mechanics", label: "Mechanics" },
-  { id: "maze-preview", label: "3D Demo" },
-  { id: "enemies", label: "Enemies" },
-  { id: "progression", label: "Progression" },
-  { id: "atmosphere", label: "Atmosphere" },
-  { id: "scripts", label: "Scripts" },
-];
-
-const NavigationBar = () => {
-  const [activeSection, setActiveSection] = useState("overview");
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 100);
-
-      // Update active section based on scroll position
-      const scrollPosition = window.scrollY + 200;
-
-      for (const section of sections) {
-        const element = document.getElementById(section.id);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
-            setActiveSection(section.id);
-            break;
-          }
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-    setMobileOpen(false);
-  };
+const NavigationBar = ({ activeId }: { activeId: string }) => {
+  const [open, setOpen] = useState(false);
+  const solid = useScrolledPastHero();
+  const reduced = useReducedMotion();
 
   return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-background/90 backdrop-blur-md border-b border-border" : ""
+    <header
+      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-500 ${
+        solid
+          ? "border-b border-border bg-background/85 backdrop-blur-md"
+          : "border-b border-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          <span className="font-display text-xl font-bold text-primary glow-text">
-            THE LABYRINTH
-          </span>
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+        <a
+          href="#hero"
+          className="font-display text-xs tracking-tight text-foreground transition-colors hover:text-accent-c"
+        >
+          W<span className="text-accent-c">C</span>KD
+        </a>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-1 overflow-x-auto">
-            {sections.map((section) => (
-              <button
-                key={section.id}
-                onClick={() => scrollToSection(section.id)}
-                className={`px-2 lg:px-3 py-2 font-mono text-xs uppercase tracking-wider transition-all whitespace-nowrap ${
-                  activeSection === section.id
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {section.label}
-                {activeSection === section.id && (
-                  <motion.div
-                    layoutId="activeSection"
-                    className="h-0.5 bg-primary mt-1"
-                  />
-                )}
-              </button>
-            ))}
-          </div>
+        <ul className="hidden items-center gap-1 lg:flex">
+          {sections.map((section, i) => {
+            const isActive = section.id === activeId;
+            return (
+              <li key={section.id}>
+                <a
+                  href={`#${section.id}`}
+                  aria-current={isActive ? "location" : undefined}
+                  className={`relative flex items-baseline gap-2 px-3 py-2 font-mono text-xs transition-colors ${
+                    isActive
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <span className="text-[0.625rem] tabular-nums opacity-50">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  {section.label}
 
-          <div className="flex items-center gap-3">
-            <span className="font-mono text-xs text-muted-foreground">
-              GDD v1.0
-            </span>
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-active"
+                      className="absolute inset-x-2 -bottom-px h-px bg-accent-c"
+                      transition={
+                        reduced
+                          ? { duration: 0 }
+                          : { type: "spring", stiffness: 380, damping: 32 }
+                      }
+                    />
+                  )}
+                </a>
+              </li>
+            );
+          })}
+        </ul>
 
-            {/* Mobile hamburger */}
-            <button
-              type="button"
-              onClick={() => setMobileOpen((v) => !v)}
-              className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg border border-border text-muted-foreground hover:text-primary hover:border-primary/50 transition-colors"
-              aria-label="Toggle menu"
-            >
-              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
-          </div>
-        </div>
-      </div>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-expanded={open}
+          aria-controls="mobile-nav"
+          aria-label={open ? "Close menu" : "Open menu"}
+          className="p-2 text-muted-foreground transition-colors hover:text-foreground lg:hidden"
+        >
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </nav>
 
-      {/* Mobile dropdown */}
       <AnimatePresence>
-        {mobileOpen && (
+        {open && (
           <motion.div
-            key="mobile-menu"
+            id="mobile-nav"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
-            className="md:hidden overflow-hidden bg-background/95 backdrop-blur-md border-b border-border"
+            transition={{ duration: reduced ? 0 : 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden border-t border-border bg-background/95 backdrop-blur-md lg:hidden"
           >
-            <div className="flex flex-col px-6 py-3 gap-1">
-              {sections.map((section) => (
-                <button
-                  key={section.id}
-                  onClick={() => scrollToSection(section.id)}
-                  className={`text-left px-3 py-2.5 rounded-lg font-mono text-sm uppercase tracking-wider transition-colors ${
-                    activeSection === section.id
-                      ? "text-primary bg-primary/10"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/30"
-                  }`}
-                >
-                  {section.label}
-                </button>
+            <ul className="px-6 py-4">
+              {sections.map((section, i) => (
+                <li key={section.id}>
+                  <a
+                    href={`#${section.id}`}
+                    onClick={() => setOpen(false)}
+                    aria-current={section.id === activeId ? "location" : undefined}
+                    className={`flex items-baseline gap-3 border-b border-border/50 py-3 font-mono text-sm transition-colors ${
+                      section.id === activeId
+                        ? "text-accent-c"
+                        : "text-muted-foreground"
+                    }`}
+                  >
+                    <span className="text-[0.625rem] tabular-nums opacity-50">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    {section.label}
+                  </a>
+                </li>
               ))}
-            </div>
+            </ul>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </header>
   );
 };
 

@@ -1,252 +1,136 @@
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { ArrowDown } from "lucide-react";
+import HeroLamps from "./HeroLamps";
 import heroImage from "@/assets/hero-maze.jpg";
 
-const HeroSection = () => {
-  const [isTablet, setIsTablet] = useState(false);
-  const [isLaptop, setIsLaptop] = useState(false);
+const EASE_GATE = [0.76, 0, 0.24, 1] as const;
+const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
-  useEffect(() => {
-    const check = () => {
-      const w = window.innerWidth;
-      setIsTablet(w >= 640 && w < 1024);
-      setIsLaptop(w >= 1024 && w <= 1280);
-    };
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+/**
+ * The doors open at dawn.
+ *
+ * Two concrete slabs cover the viewport on load and grind apart, which is the
+ * only thing that happens to a Glader every morning for three years. Everything
+ * behind them is already painted, so the reveal costs one transform per slab.
+ */
+const HeroSection = () => {
+  const reduced = useReducedMotion();
+  const gateDelay = reduced ? 0 : 0.35;
+  const gateDuration = reduced ? 0 : 1.7;
+
+  /** Content waits for the doors. */
+  const enter = (delay: number) => ({
+    initial: { opacity: 0, y: 22 },
+    animate: { opacity: 1, y: 0 },
+    transition: {
+      duration: reduced ? 0 : 0.9,
+      delay: reduced ? 0 : gateDelay + gateDuration * 0.55 + delay,
+      ease: EASE_OUT,
+    },
+  });
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background image */}
+    <section
+      id="hero"
+      data-act="maze"
+      className="relative flex min-h-[100svh] items-center justify-center overflow-hidden"
+    >
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroImage})` }}
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: `url(${heroImage})`,
+          // Held back only as far as the lamps need to still read as lamps.
+          filter: "grayscale(0.35) contrast(1.08) brightness(0.5)",
+        }}
+        aria-hidden
       />
 
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
-
-      {/* Fog effect layers */}
-      <div className="absolute inset-0 opacity-30">
-        <div className="absolute inset-0 bg-gradient-radial from-primary/5 via-transparent to-transparent" />
-      </div>
-
-      {/* Animated grid lines */}
-      <div className="absolute inset-0 opacity-10">
-        <div
-          className="h-full w-full"
-          style={{
-            backgroundImage: `
-              linear-gradient(hsl(var(--primary) / 0.3) 1px, transparent 1px),
-              linear-gradient(90deg, hsl(var(--primary) / 0.3) 1px, transparent 1px)
-            `,
-            backgroundSize: "60px 60px",
-          }}
-        />
-      </div>
-
-      {/* Light source glow overlays */}
-      {/* 1. Top center ceiling lamp */}
-      <div
-        className="hidden sm:block absolute rounded-full pointer-events-none z-[1]"
-        style={{
-          top: isLaptop ? "12%" : isTablet ? "13%" : "6%",
-          left: "50%",
-          transform: "translateX(-50%)",
-          width: "clamp(50px, 8vw, 120px)",
-          height: "clamp(50px, 8vw, 120px)",
-          background:
-            "radial-gradient(circle, rgba(200,230,255,0.4) 0%, transparent 70%)",
-          filter: "blur(20px)",
-          animation: "flickerGlow1 3s ease-in-out infinite",
-        }}
-      />
-      {/* 2. Back center ceiling lamp */}
-      <div
-        className="hidden sm:block absolute rounded-full pointer-events-none z-[1]"
-        style={{
-          top: isLaptop ? "30%" : isTablet ? "32%" : "28%",
-          left: "50%",
-          transform: "translateX(-50%) translateY(40%)",
-          width: "clamp(30px, 4vw, 60px)",
-          height: "clamp(30px, 4vw, 60px)",
-          background:
-            "radial-gradient(circle, rgba(200,230,255,0.25) 0%, transparent 100%)",
-          filter: "blur(20px)",
-          animation: "flickerGlow2 2.5s ease-in-out infinite",
-          animationDelay: "0.8s",
-        }}
-      />
-      {/* 3. Bottom left floor lamp */}
-      <div
-        className="hidden sm:block absolute pointer-events-none z-[1]"
-        style={{
-          bottom: isLaptop ? "12%" : isTablet ? "13%" : "8%",
-          left: isLaptop ? "6%" : isTablet ? "-4%" : "13%",
-          width: "clamp(60px, 10vw, 150px)",
-          height: "clamp(12px, 2vw, 30px)",
-          borderRadius: "6px",
-          background:
-            "radial-gradient(ellipse, rgba(200,230,255,0.4) 0%, transparent 100%)",
-          filter: "blur(20px)",
-          transform: "rotate(-30deg)",
-          animation: "flickerGlow3 4s ease-in-out infinite",
-          animationDelay: "0.3s",
-        }}
-      />
-      {/* 4. Bottom right floor lamp */}
-      <div
-        className="hidden sm:block absolute pointer-events-none z-[1]"
-        style={{
-          bottom: isLaptop ? "12%" : isTablet ? "13%" : "8%",
-          right: isLaptop ? "5%" : isTablet ? "-4%" : "12%",
-          width: "clamp(60px, 10vw, 150px)",
-          height: "clamp(12px, 2vw, 30px)",
-          borderRadius: "6px",
-          background:
-            "radial-gradient(ellipse, rgba(200,230,255,0.4) 0%, transparent 100%)",
-          filter: "blur(20px)",
-          transform: "rotate(30deg)",
-          animation: "flickerGlow3 4s ease-in-out infinite",
-          animationDelay: "0.4s",
-        }}
-      />
-      {/* 5a. Mid back left */}
-      <div
-        className="hidden sm:block absolute pointer-events-none z-[1]"
-        style={{
-          bottom: isLaptop ? "29%" : isTablet ? "29%" : "27%",
-          left: isLaptop ? "27%" : isTablet ? "21%" : "31%",
-          width: "clamp(35px, 6vw, 80px)",
-          height: "clamp(12px, 2vw, 30px)",
-          borderRadius: "6px",
-          background:
-            "radial-gradient(ellipse, rgba(200,230,255,0.4) 0%, transparent 100%)",
-          filter: "blur(20px)",
-          transform: "rotate(-30deg)",
-          animation: "flickerGlow3 4s ease-in-out infinite",
-          animationDelay: "0.5s",
-        }}
-      />
-      {/* 5b. Mid back right */}
-      <div
-        className="hidden sm:block absolute pointer-events-none z-[1]"
-        style={{
-          bottom: isLaptop ? "29%" : isTablet ? "29%" : "27%",
-          right: isLaptop ? "27%" : isTablet ? "20%" : "31%",
-          width: "clamp(35px, 6vw, 80px)",
-          height: "clamp(12px, 2vw, 30px)",
-          borderRadius: "6px",
-          background:
-            "radial-gradient(ellipse, rgba(200,230,255,0.4) 0%, transparent 100%)",
-          filter: "blur(20px)",
-          transform: "rotate(30deg)",
-          animation: "flickerGlow3 4s ease-in-out infinite",
-          animationDelay: "0.6s",
-        }}
-      />
+      <HeroLamps />
 
       <div
-        className="hidden sm:block absolute pointer-events-none z-[1]"
+        className="absolute inset-0 z-[2]"
         style={{
-          bottom: isLaptop ? "40%" : isTablet ? "40%" : "38%",
-          right: isLaptop ? "39%" : isTablet ? "35%" : "40.50%",
-          width: "clamp(20px, 3vw, 40px)",
-          height: "clamp(15px, 2vw, 30px)",
-          borderRadius: "6px",
           background:
-            "radial-gradient(ellipse, rgba(200,230,255,0.4) 0%, transparent 100%)",
-          filter: "blur(20px)",
-          transform: "rotate(30deg)",
-          animation: "flickerGlow3 4s ease-in-out infinite",
-          animationDelay: "0.7s",
+            "linear-gradient(180deg, hsl(var(--background) / 0.55) 0%, hsl(var(--background) / 0.4) 45%, hsl(var(--background)) 100%)",
         }}
+        aria-hidden
       />
-
-      <div
-        className="hidden sm:block absolute pointer-events-none z-[1]"
-        style={{
-          bottom: isLaptop ? "39%" : isTablet ? "38%" : "36%",
-          left: isLaptop ? "38%" : isTablet ? "35%" : "39.50%",
-          width: "clamp(20px, 3vw, 40px)",
-          height: "clamp(15px, 2vw, 30px)",
-          borderRadius: "6px",
-          background:
-            "radial-gradient(ellipse, rgba(200,230,255,0.4) 0%, transparent 100%)",
-          filter: "blur(20px)",
-          transform: "rotate(30deg)",
-          animation: "flickerGlow3 4s ease-in-out infinite",
-          animationDelay: "0.8s",
-        }}
-      />
+      {!reduced && <div className="dust absolute inset-0 z-[2] opacity-50" aria-hidden />}
 
       {/* Content */}
-      <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-        >
-          <p className="font-mono text-primary text-sm md:text-base tracking-[0.3em] uppercase mb-4">
-            Game Design Document
-          </p>
-        </motion.div>
+      <div className="relative z-10 mx-auto max-w-4xl px-6 text-center">
+        <motion.p {...enter(0)} className="label">
+          Trial One · Subject A2
+        </motion.p>
 
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-          className="font-display text-5xl md:text-7xl lg:text-8xl font-bold mb-6 glow-text"
+          {...enter(0.12)}
+          className="mt-8 text-[clamp(2.25rem,8vw,5.5rem)] text-foreground"
         >
-          <span className="text-foreground">THE</span>{" "}
-          <span className="text-primary">LABYRINTH</span>
+          The Maze
+          <br />
+          <span className="text-accent-c">Runner</span>
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
-          className="font-body text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8"
+          {...enter(0.24)}
+          className="mx-auto mt-8 max-w-xl text-lg leading-relaxed text-muted-foreground"
         >
-          A first-person survival horror experience where every wall hides
-          secrets, every shadow holds danger, and the maze itself is alive.
+          Three films, one wall, and an organisation that built the whole thing to
+          watch what a frightened brain does under observation. This is a study of
+          how it was made — and of the game it keeps almost being.
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.6, ease: "easeOut" }}
-          className="flex flex-wrap gap-4 justify-center mb-16"
+          {...enter(0.36)}
+          className="mt-12 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 font-mono text-xs text-muted-foreground"
         >
-          <span className="px-4 py-2 bg-primary/10 border border-primary/30 rounded-full font-mono text-sm text-primary">
-            3D Survival Horror
-          </span>
-          <span className="px-4 py-2 bg-secondary/10 border border-secondary/30 rounded-full font-mono text-sm text-secondary">
-            Procedural Generation
-          </span>
-          <span className="px-4 py-2 bg-danger/10 border border-danger/30 rounded-full font-mono text-sm text-danger">
-            AI-Driven Enemies
-          </span>
+          <span>2014 — 2018</span>
+          <span className="hidden h-3 w-px bg-border-strong sm:block" />
+          <span>Dir. Wes Ball</span>
+          <span className="hidden h-3 w-px bg-border-strong sm:block" />
+          <span className="text-accent-c">WICKED is good.</span>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1, delay: 1 }}
-          className="mt-10 flex justify-center"
+        <motion.a
+          {...enter(0.6)}
+          href="#the-maze"
+          className="group mt-20 inline-flex flex-col items-center gap-3 text-muted-foreground transition-colors hover:text-accent-c"
         >
-          <ChevronDown className="w-8 h-8 text-primary animate-bounce" />
-        </motion.div>
+          <span className="label group-hover:text-accent-c">Enter</span>
+          <ArrowDown
+            className="h-4 w-4 motion-safe:animate-bounce"
+            aria-hidden
+          />
+        </motion.a>
       </div>
 
-      {/* Decorative corner elements */}
-      <div className="absolute top-8 left-8 w-20 h-20 border-l-2 border-t-2 border-primary/30" />
-      <div className="absolute top-8 right-8 w-20 h-20 border-r-2 border-t-2 border-primary/30" />
-      <div className="absolute bottom-8 left-8 w-20 h-20 border-l-2 border-b-2 border-primary/30" />
-      <div className="absolute bottom-8 right-8 w-20 h-20 border-r-2 border-b-2 border-primary/30" />
+      {/* The doors. Two slabs, a seam of daylight between them. */}
+      {!reduced && (
+        <>
+          <motion.div
+            aria-hidden
+            initial={{ x: 0 }}
+            animate={{ x: "-101%" }}
+            transition={{ duration: gateDuration, delay: gateDelay, ease: EASE_GATE }}
+            className="concrete absolute inset-y-0 left-0 z-20 w-1/2 border-r border-foreground/10 bg-[#121514]"
+          />
+          <motion.div
+            aria-hidden
+            initial={{ x: 0 }}
+            animate={{ x: "101%" }}
+            transition={{ duration: gateDuration, delay: gateDelay, ease: EASE_GATE }}
+            className="concrete absolute inset-y-0 right-0 z-20 w-1/2 border-l border-foreground/10 bg-[#121514]"
+          />
+          <motion.div
+            aria-hidden
+            initial={{ opacity: 0.9, scaleX: 1 }}
+            animate={{ opacity: 0, scaleX: 8 }}
+            transition={{ duration: gateDuration, delay: gateDelay, ease: EASE_GATE }}
+            className="absolute inset-y-0 left-1/2 z-20 w-px -translate-x-1/2 bg-accent-c"
+          />
+        </>
+      )}
     </section>
   );
 };
