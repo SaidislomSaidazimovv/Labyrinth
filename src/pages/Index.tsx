@@ -1,92 +1,87 @@
+import { useEffect, useMemo } from "react";
 import NavigationBar from "@/components/NavigationBar";
+import MazeRail from "@/components/MazeRail";
+import ActBackdrop from "@/components/ActBackdrop";
 import HeroSection from "@/components/HeroSection";
-import OverviewSection from "@/components/OverviewSection";
-import StorySection from "@/components/StorySection";
-import MechanicsSection from "@/components/MechanicsSection";
-import EnemiesSection from "@/components/EnemiesSection";
-import ProgressionSection from "@/components/ProgressionSection";
-import AtmosphereSection from "@/components/AtmosphereSection";
-import ScriptsSection from "@/components/ScriptsSection";
-import MazePreviewSection from "@/components/MazePreviewSection";
-import { motion } from "framer-motion";
+import FilmSection from "@/components/FilmSection";
+import MazeMechanics from "@/components/MazeMechanics";
+import MazePreview from "@/components/MazePreview";
+import GrieversSection from "@/components/GrieversSection";
+import CharactersSection from "@/components/CharactersSection";
+import WckdSection from "@/components/WckdSection";
+import ArtSection from "@/components/ArtSection";
+import GameSection from "@/components/GameSection";
+import { films } from "@/data/mazeRunnerContent";
+import { sections } from "@/lib/sections";
+import { useActiveSection } from "@/hooks/useActiveSection";
+
+const SECTION_IDS = sections.map((s) => s.id);
 
 const Index = () => {
+  const activeId = useActiveSection(SECTION_IDS);
+
+  const act = useMemo(
+    () => sections.find((s) => s.id === activeId)?.act ?? "maze",
+    [activeId],
+  );
+
+  // Hoisting the act onto <html> lets the chrome that lives outside any
+  // section — nav, rail, scrollbar — pick up the same accent as the section
+  // being read. Sections still override it locally.
+  useEffect(() => {
+    document.documentElement.dataset.act = act;
+  }, [act]);
+
+  const [first, second, third] = films;
+
   return (
-    <div className="min-h-screen bg-background scanline">
-      <NavigationBar />
+    <>
+      <ActBackdrop act={act} />
+      <NavigationBar activeId={activeId} />
+      <MazeRail activeId={activeId} />
+
       <HeroSection />
-      
+
       <main>
-        <OverviewSection />
-        
-        <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-        
-        <StorySection />
-        
-        <div className="h-px bg-gradient-to-r from-transparent via-secondary/30 to-transparent" />
-        
-        <MechanicsSection />
-        
-        <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-        
-        <MazePreviewSection />
-        
-        <div className="h-px bg-gradient-to-r from-transparent via-secondary/30 to-transparent" />
-        
-        <EnemiesSection />
-        
-        <div className="h-px bg-gradient-to-r from-transparent via-danger/30 to-transparent" />
-        
-        <ProgressionSection />
-        
-        <div className="h-px bg-gradient-to-r from-transparent via-secondary/30 to-transparent" />
-        
-        <AtmosphereSection />
-        
-        <div className="h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-        
-        <ScriptsSection />
+        <FilmSection film={first} index="01">
+          <MazeMechanics />
+          <MazePreview />
+        </FilmSection>
+
+        <FilmSection film={second} index="02" />
+        <FilmSection film={third} index="03" />
+
+        <GrieversSection />
+        <CharactersSection />
+        <WckdSection />
+        <ArtSection />
+        <GameSection />
       </main>
 
-      {/* Footer */}
-      <footer className="py-16 px-6 border-t border-border">
-        <div className="max-w-6xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="font-display text-3xl font-bold text-primary glow-text mb-4">
-              THE LABYRINTH
-            </h2>
-            <p className="text-muted-foreground mb-8">
-              Game Design Document v1.0 — Ready for Development
+      <footer data-act="maze" className="border-t border-border py-20">
+        <div className="mx-auto max-w-6xl px-6">
+          <p className="font-display text-2xl text-foreground">
+            The Maze <span className="text-accent-c">Runner</span>
+          </p>
+
+          <div className="mt-10 grid gap-8 border-t border-border pt-10 text-sm text-muted-foreground md:grid-cols-3">
+            <p className="leading-relaxed">
+              An unofficial study of the trilogy directed by Wes Ball, adapted from
+              the novels of James Dashner. Not affiliated with the rights holders.
             </p>
-            
-            <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
-              <span className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-primary" />
-                Genre: Survival Horror
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-secondary" />
-                Engine: Unity 2022+
-              </span>
-              <span className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-danger" />
-                Platform: PC
-              </span>
-            </div>
-          </motion.div>
-          
-          <div className="mt-12 pt-8 border-t border-border/50">
-            <p className="font-mono text-xs text-muted-foreground">
-              © 2026 — Confidential Game Design Document
+            <p className="leading-relaxed">
+              Where a detail comes from the books rather than the films, the page
+              says so. Where a source is uncertain, it says that too.
+            </p>
+            <p className="font-mono text-xs leading-relaxed">
+              2014 — 2018
+              <br />
+              Three films · Eight sections · One way out
             </p>
           </div>
         </div>
       </footer>
-    </div>
+    </>
   );
 };
 
