@@ -74,10 +74,11 @@ const FilmSection = ({ film, index, children }: FilmSectionProps) => {
               {film.ending}
             </p>
           </div>
-
-          {children}
         </div>
       </div>
+
+      {/* Each film's signature piece gets the full width, clear of the slate. */}
+      {children}
     </Section>
   );
 };
