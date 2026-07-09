@@ -22,12 +22,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Turns Pages on and points its source at Actions. Without this the deploy
-      # job fails until somebody visits Settings → Pages and does it by hand.
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
-
+      # No configure-pages step. Its `enablement: true` needs admin rights that
+      # GITHUB_TOKEN does not have, and it fails the whole build when Pages is
+      # off. Turning Pages on is a one-time manual step:
+      #   Settings → Pages → Build and deployment → Source: GitHub Actions
       - uses: actions/setup-node@v4
         with:
           node-version: 22
