@@ -167,6 +167,164 @@ export const films: Film[] = [
   },
 ];
 
+/* ---------------------------------------------------------------- prologue */
+
+export interface Era {
+  label: string;
+  title: string;
+  text: string;
+  act: Act;
+}
+
+/**
+ * The films never name a year, so neither does this. Only what is stated:
+ * the flares, the virus, the Trials, and the order they came in.
+ */
+export const chronology = {
+  title: "Before the Glade",
+  standfirst:
+    "Nobody in the Maze knows any of this. It takes three films and one stolen memory to put it back together.",
+  eras: [
+    {
+      label: "The sun",
+      title: "Solar flares scorch the surface",
+      text: "The Earth burns from above. What is left of it is the Scorch, and there is not enough of anything for the people still standing on it.",
+      act: "scorch",
+    },
+    {
+      label: "The virus",
+      title: "The Flare",
+      text: "A pathogen that eats the brain. It does not kill quickly, and it does not leave a person recognisable on the way out.",
+      act: "scorch",
+      note: "Ava Paige's recording gives the order: flares, then virus. The novels add that the virus was released deliberately, as population control. The films do not say so.",
+    },
+    {
+      label: "The exception",
+      title: "Some of the young do not get sick",
+      text: "Their brains fight it and win. WCKD calls them subjects. Everyone else calls them Munies.",
+      act: "wckd",
+    },
+    {
+      label: "The department",
+      title: "WCKD builds the Maze",
+      text: "Thomas and Teresa help design it, and then have the memory of doing so taken away from them. The Killzone is the brain; the Maze exists to make one light up.",
+      act: "wckd",
+    },
+    {
+      label: "Trial One",
+      title: "A boy every thirty days",
+      text: "Alby comes up in the Box first. Others follow, one a month, until there are enough of them to build a society and argue about how to run it. Three years of Runners charting a maze that rearranges itself every night.",
+      act: "maze",
+    },
+    {
+      label: "The last one",
+      title: "Thomas, then Teresa",
+      text: "The Greenie breaks the third rule in a week, kills a Griever, and takes the anti-venom on purpose to get his memory back. The girl who follows him is the last arrival, ever. Then the walls stay open.",
+      act: "maze",
+    },
+    {
+      label: "Phase Two",
+      title: "There was never an outside",
+      text: "Paige stages her own death, the survivors are extracted, and Trial Two is a desert full of the infected. Winston does not come out of it. Minho does not come out at all.",
+      act: "scorch",
+    },
+    {
+      label: "Phase Three",
+      title: "The Last City",
+      text: "Stop recording, start harvesting. Newt dies asking for it, Lawrence takes the wall down, and the cure turns out to have been walking around in Thomas the entire time.",
+      act: "city",
+    },
+  ] as (Era & { note?: string })[],
+};
+
+/* ------------------------------------------------------------------- flare */
+
+export interface FlareStage {
+  /** Position on the scrubber, 0–100. */
+  at: number;
+  person: string;
+  status: string;
+  text: string;
+}
+
+/**
+ * The films give no clinical staging for the Flare — no timeline, no numbers,
+ * no chart. What they give is four people at four distances from the end.
+ * So the scale is measured in people, which is the only honest unit here.
+ */
+export const flare = {
+  title: "The Flare, measured in people",
+  standfirst:
+    "There is no chart for this in any of the three films. There are only the ones it took, and how far along they were when we met them.",
+  stages: [
+    {
+      at: 0,
+      person: "Thomas",
+      status: "Immune",
+      text: "It never takes hold. His brain fights it and wins, and for three films nobody understands why. The answer is in his blood, and WCKD spends a decade looking everywhere else.",
+    },
+    {
+      at: 30,
+      person: "Brenda",
+      status: "Infected, treated",
+      text: "Bitten in the Scorch. Mary Cooper's enzyme buys her time — it slows the Flare, it does not end it. Nobody in the resistance pretends otherwise.",
+    },
+    {
+      at: 58,
+      person: "Newt",
+      status: "Infected, declining",
+      text: "He hides the veins climbing his arm for as long as he can hold a sleeve down. He is lucid until he is not, and then he is lucid again, which is the worst part of it.",
+    },
+    {
+      at: 80,
+      person: "Lawrence",
+      status: "Advanced, still himself",
+      text: "The Flare took his face and left the man. He rules what the wall keeps out, and he knows exactly what he is going to do about the wall.",
+    },
+    {
+      at: 100,
+      person: "The Cranks",
+      status: "Gone",
+      text: "The body keeps moving. Whoever was driving it is not there any more, and there is no coming back from this — not with enzyme, not with anything.",
+    },
+  ] as FlareStage[],
+  note: "Winston is bitten crossing the Scorch and does not wait to find out where on this scale he lands.",
+};
+
+/* --------------------------------------------------------------- last city */
+
+/**
+ * Pados grades the third film orange against teal. Warm is the resistance,
+ * the desert, the people outside the wall. Cold blue is the machine.
+ */
+export const lastCity = {
+  title: "One wall, two worlds",
+  standfirst:
+    "The Death Cure puts its whole argument in a single piece of architecture. Drag the wall and see which side the light is on.",
+  outside: {
+    label: "Outside the wall",
+    tagline: "Warm, and dying",
+    points: [
+      "The sick, the poor, and everyone WCKD has finished with.",
+      "Lawrence rules it, and Gally lives in it.",
+      "Lit gold and sodium. Cluttered, organic, alive.",
+      "The only way in is through someone who was already thrown out.",
+    ],
+  },
+  inside: {
+    label: "Inside the wall",
+    tagline: "Cold, and clean",
+    points: [
+      "Glass, chrome, curtain wall. Gloss floors and white fluorescents.",
+      "WCKD's tower, and Ava Paige's office in gold and grey.",
+      "The Immunes, in pods, being drained.",
+      "Lit steel blue. Angular, mirrored, and empty of anyone who matters.",
+    ],
+  },
+  closing:
+    "Lawrence drives the explosives into it himself. The Cranks come through the breach, and the city learns what it had been keeping out.",
+};
+
 /* ---------------------------------------------------------------- grievers */
 
 export const grievers = {
@@ -506,13 +664,13 @@ export const wckd = {
       code: "TRIAL 1",
       label: "Result",
       classification: "CHANCELLOR EYES ONLY",
-      redacted: "Success. Subject A2 solved the Maze in 3 years, 27 days. Variables performed as modelled. Proceed to Phase Two.",
+      redacted: "Trial One is a success. The Maze produced the response we needed. Phase Two begins.",
     },
     {
       code: "MEMO",
       label: "Extraction protocol",
       classification: "RESTRICTED",
-      redacted: "Immune subjects are to be drained, not held. Enzyme yield falls sharply after the second cycle.",
+      redacted: "Immune subjects are to be drained, not held.",
     },
   ] as WckdFile[],
   aesthetic: [

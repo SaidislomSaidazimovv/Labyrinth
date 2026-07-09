@@ -12,13 +12,22 @@ The project began life as an unrelated original GDD called "The Labyrinth" (Kira
 
 ```sh
 npm run dev        # dev server on port 8080 (not 5173)
-npm run build      # production build
-npm run build:dev  # build with development mode sourcemaps
+npm run build      # production build — base path /Labyrinth/
+npm run build:dev  # build with development mode sourcemaps, base path /
 npm run lint       # eslint over the repo
-npm run preview    # serve the built dist/
+npm run preview    # serve the built dist/ (from /Labyrinth/, not /)
 ```
 
-No test suite, no typecheck script. `npx tsc -b` works if you need type errors. The three lint errors under `src/components/ui/` and the `require()` in `tailwind.config.ts` are pre-existing.
+No test suite, no typecheck script. `npx tsc -b` works if you need type errors. `.github/workflows/ci.yml` runs lint, typecheck and build on every push, so **lint must stay at zero errors** — warnings are fine.
+
+## Deployment
+
+GitHub Pages, from `.github/workflows/pages.yml` on every push to `main`. The repo is served from `/Labyrinth/`, so:
+
+- `vite.config.ts` sets `base` when `mode === "production"`. It is keyed on **`mode`, not `command`** — `vite preview` reports command `"serve"`, so a command check would serve the production bundle from `/` while its HTML asks for `/Labyrinth/`, and every asset would fall through to the SPA fallback.
+- `BrowserRouter` takes `basename={import.meta.env.BASE_URL}`.
+- The workflow copies `dist/index.html` to `dist/404.html`; Pages has no rewrite rules, so that is the SPA fallback.
+- Open Graph tags in `index.html` need **absolute** URLs — crawlers don't resolve relative paths. If the repo is renamed, `BASE`, the OG URLs and the README link all move together.
 
 ## Architecture
 
@@ -37,6 +46,10 @@ CC BY and CC BY-SA oblige us to name the photographer wherever the image appears
 **The Griever is a real model, embedded, not built here.** The film's asset was made by Method Studios and has never been released. `GrieverModel.tsx` embeds a CC-BY 4.0 sculpt (321k faces, rigged) from Sketchfab. The licence requires the credit rendered beneath it — leave it there. An earlier pass hand-built a procedural Griever from the anatomy brief; that was replaced, and self-modelling it again is not what's wanted.
 
 **Section registry.** `src/lib/sections.ts` is the single list of the eight sections — id, label, act. It drives the nav, the `MazeRail`, and the active-section tracking. A new section needs an entry here *and* a rendered `<section>` with the matching DOM id. Eight is not arbitrary: the maze has eight numbered sections, which is why the page numbers 01–08.
+
+**`PrologueTimeline` sits outside that eight on purpose** — it's what happened before there was a maze to number, so it gets no index and no nav entry. Don't add it to `sections.ts`; that would break the conceit and the numbering.
+
+**Each film section carries one signature piece**, passed as `children` to `FilmSection` and rendered full-width below the slate: `MazeMechanics` + `MazePreview` for film I, `FlareProgression` for II, `LastCityWall` for III. Both new pieces are driven by a real `<input type="range">`, so a keyboard gets exactly what a pointer gets.
 
 **Page composition.** `src/pages/Index.tsx` stacks the sections and hoists the active act onto `<html data-act>`, so nav, rail and scrollbar pick up the same accent as the section being read.
 

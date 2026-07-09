@@ -5,7 +5,8 @@ import NotFound from "./pages/NotFound";
 
 const App = () => (
   <TooltipProvider>
-    <BrowserRouter>
+    {/* GitHub Pages serves the site from a subpath. BASE_URL carries it. */}
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <Routes>
         <Route path="/" element={<Index />} />
         {/* Add custom routes above the catch-all. */}

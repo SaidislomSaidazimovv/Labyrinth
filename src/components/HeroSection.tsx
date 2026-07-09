@@ -94,7 +94,7 @@ const HeroSection = () => {
 
         <motion.a
           {...enter(0.6)}
-          href="#the-maze"
+          href="#before"
           className="group mt-20 inline-flex flex-col items-center gap-3 text-muted-foreground transition-colors hover:text-accent-c"
         >
           <span className="label group-hover:text-accent-c">Enter</span>

@@ -3,9 +3,12 @@ import NavigationBar from "@/components/NavigationBar";
 import MazeRail from "@/components/MazeRail";
 import ActBackdrop from "@/components/ActBackdrop";
 import HeroSection from "@/components/HeroSection";
+import PrologueTimeline from "@/components/PrologueTimeline";
 import FilmSection from "@/components/FilmSection";
 import MazeMechanics from "@/components/MazeMechanics";
 import MazePreview from "@/components/MazePreview";
+import FlareProgression from "@/components/FlareProgression";
+import LastCityWall from "@/components/LastCityWall";
 import GrieversSection from "@/components/GrieversSection";
 import CharactersSection from "@/components/CharactersSection";
 import WckdSection from "@/components/WckdSection";
@@ -42,14 +45,23 @@ const Index = () => {
 
       <HeroSection />
 
-      <main>
+      <main id="content">
+        {/* Unnumbered on purpose: the page counts its sections the way the Maze
+            counts its own, and this is what came before there was one. */}
+        <PrologueTimeline />
+
         <FilmSection film={first} index="01">
           <MazeMechanics />
           <MazePreview />
         </FilmSection>
 
-        <FilmSection film={second} index="02" />
-        <FilmSection film={third} index="03" />
+        <FilmSection film={second} index="02">
+          <FlareProgression />
+        </FilmSection>
+
+        <FilmSection film={third} index="03">
+          <LastCityWall />
+        </FilmSection>
 
         <GrieversSection />
         <CharactersSection />

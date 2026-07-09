@@ -2,7 +2,16 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 
-export default defineConfig(() => ({
+// GitHub Pages serves this repo from /Labyrinth/, so assets need that prefix in
+// production. Dev stays at the root, where the dev server lives.
+//
+// Keyed on `mode`, not `command`: `vite preview` reports command "serve", so a
+// command check would serve the production bundle from the wrong base and every
+// asset would 404 into the SPA fallback.
+const BASE = "/Labyrinth/";
+
+export default defineConfig(({ mode }) => ({
+  base: mode === "production" ? BASE : "/",
   server: {
     host: "::",
     port: 8080,
