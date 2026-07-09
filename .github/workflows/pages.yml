@@ -22,9 +22,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Turns Pages on and points its source at Actions. Without this the deploy
+      # job fails until somebody visits Settings → Pages and does it by hand.
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - run: npm ci
